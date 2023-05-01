@@ -40,7 +40,7 @@ public class LoanCalculationService {
     }
 
     private List<MonthlyPlan> getMonthlyPlans(int totalMonths, LoanCalculationContext context,
-                                             CalculableValue monthlyPayment, LoanPlan loanPlan) {
+                                              CalculableValue monthlyPayment, LoanPlan loanPlan) {
         List<MonthlyPlan> monthlyPlans = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
         MonthlyPlan lastMonthlyPlan = IntStream.rangeClosed(1, totalMonths)
@@ -63,20 +63,13 @@ public class LoanCalculationService {
         return monthlyPlan;
     }
 
-    private CalculableValue calculateMonthlyPayment(CalculableValue loanAmount, LoanCalculationContext context, int totalMonth) {
-        return context
-                .withTotalMonths(totalMonth)
-                .withBalance(loanAmount)
-                .calculateMonthlyPayment();
-    }
-
     private MonthlyPlan calculateInterestPrincipalAndBalance(MonthlyPlan prev, MonthlyPlan current,
                                                              LoanCalculationContext context,
                                                              List<MonthlyPlan> monthlyPlans) {
         CalculableValue interest = calculateInterest(context, current, prev);
         CalculableValue principle = CalculableValue.of(current.getPayment()).minus(interest);
         current.setInterest(interest.doubleValue());
-        current.setTotalInterest(interest.plus(prev.getTotalInterest()).doubleValue());
+        current.setTotalInterest(interest.plus(prev.getTotalInterest()).rounded().doubleValue());
         current.setPrincipal(principle.rounded().doubleValue());
         current.setBalance(CalculableValue.of(prev.getBalance()).minus(principle).rounded().doubleValue());
 
@@ -84,6 +77,21 @@ public class LoanCalculationService {
         return current;
     }
 
+    /**
+     * Calculates monthly payment in accordance with implementation chosen in factory class.
+     * Requires total months and balance set before calculation is done
+     */
+    private CalculableValue calculateMonthlyPayment(CalculableValue loanAmount, LoanCalculationContext context, int totalMonth) {
+        return context
+                .withTotalMonths(totalMonth)
+                .withBalance(loanAmount)
+                .calculateMonthlyPayment();
+    }
+
+    /**
+     * Calculates interest in accordance with implementation chosen in factory class.
+     * Requires year of calculation and balance set before calculation is done
+     */
     private CalculableValue calculateInterest(LoanCalculationContext context, MonthlyPlan current, MonthlyPlan prev) {
         return context
                 .withYear(current.getYearValue())

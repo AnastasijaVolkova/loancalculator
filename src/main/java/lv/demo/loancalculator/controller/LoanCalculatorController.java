@@ -25,7 +25,7 @@ public class LoanCalculatorController {
 
     @GetMapping({"loan/new"})
     public String createNewLoan(Model model) {
-        model.addAttribute("loanInput", new LoanInput());
+        model.addAttribute("loanInput", LoanInput.builder().build());
         return "selectLoan.html";
     }
 
@@ -37,7 +37,7 @@ public class LoanCalculatorController {
 
     @GetMapping("loan/{id}")
     public String getLoanPlan(@PathVariable long id, Model model) {
-        LoanPlanView loanPlan = repositoryService.getLoanPlan(1);
+        LoanPlanView loanPlan = repositoryService.getLoanPlan(id);
         model.addAttribute("loanPlan", loanPlan);
         return "loanPlan.html";
     }

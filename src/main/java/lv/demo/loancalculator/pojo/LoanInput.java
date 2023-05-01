@@ -6,11 +6,12 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Builder
 public class LoanInput {
 
-    private int years;
-    private int months;
-    private double amount;
+    private final int years;
+    private final int months;
+    private final double amount;
 
 }

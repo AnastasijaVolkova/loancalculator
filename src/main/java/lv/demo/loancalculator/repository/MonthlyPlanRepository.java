@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface MonthlyPlanRepository extends JpaRepository<MonthlyPlan, Long> {
 
-    List<MonthlyPlanView> getMonthlyPlanById(long id);
+    List<MonthlyPlanView> getMonthlyPlanByLoanPlanId(long id);
 }
